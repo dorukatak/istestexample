@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <string name="freshchat_file_provider_authority">com.sentismart.glowdating.provider</string>-->
+    <string name="facebook_app_id">493798818629670</string>
+    <string name="facebook_client_token">ba363f92aaaa75358f5c2a7ae8e9bacc</string>
+</resources>
+

@@ -1,0 +1,114 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '13.0'
+
+
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+
+  #use_frameworks!
+  use_frameworks! :linkage => :static
+
+  pod 'Google-Mobile-Ads-SDK'
+  pod 'Firebase/Core' ,'~> 10.20.0'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/Analytics','~> 10.20.0'
+  pod 'Firebase/Messaging','~> 10.20.0'
+  pod 'Firebase/Auth'
+  pod 'GoogleUtilities'
+  pod 'FBAudienceNetwork','~> 6.15'
+
+
+
+  use_modular_headers!
+    pod 'AMRSDK', '~> 1.5'
+    #mediation adapters
+    pod 'AMRAdapterAdcolony', '~> 4.9'
+    pod 'AMRAdapterAdmob', '~> 11.1'
+    pod 'AMRAdapterAdmost', '~> 1.6'
+    pod 'AMRAdapterApplovin', '~> 12.3'
+    pod 'AMRAdapterChartboost', '~> 9.7'
+    pod 'AMRAdapterCriteo', '~> 6.0'
+    #pod 'AMRAdapterFacebook', '~> 6.14'
+
+    pod 'AMRAdapterInmobi', '~> 10.6'
+    pod 'AMRAdapterIronsource', '~> 7.9'
+    pod 'AMRAdapterPangle', '~> 5.8'
+    pod 'AMRAdapterUnity', '~> 4.9'
+    pod 'AMRAdapterVungle', '~> 7.2'
+    #pod 'GoogleMobileAdsMediationIronSource', '7.1.6.1.0'
+    #pod 'GoogleMobileAdsMediationIronSource'
+    #pod 'IronSourceSDK','7.9.1.0'
+
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+post_install do |installer|
+
+
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+
+    # Fix Xcode 14 bundle code signing issue
+    if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+      target.build_configurations.each do |config|
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      end
+    end
+
+    target.build_configurations.each do |config|
+         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+
+      # You can remove unused permissions here
+      # for more infomation: https://github.com/BaseflowIT/flutter-permission-handler/blob/master/permission_handler/ios/Classes/PermissionHandlerEnums.h
+      # e.g. when you don't need camera permission, just add 'PERMISSION_CAMERA=0'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+
+
+        'PERMISSION_CONTACTS=1',
+        'PERMISSION_CAMERA=1',
+        'PERMISSION_MICROPHONE=1',
+        'PERMISSION_PHOTOS=1',
+        'PERMISSION_NOTIFICATIONS=1',
+        'PERMISSION_MEDIA_LIBRARY=1',
+        'PERMISSION_APP_TRACKING_TRANSPARENCY=1',
+
+      ]
+
+    end
+
+  end
+end
+
+target 'imageNotification' do
+  pod 'GoogleUtilities'
+  #use_frameworks!
+  use_frameworks! :linkage => :static
+  pod 'Firebase/Messaging','~> 10.20.0'
+end
